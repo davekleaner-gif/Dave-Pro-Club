@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dave Pro Club — Tu coche, siempre impecable</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    :root {
+      --black:   #0a0a0a;
+      --gold:    #C9A84C;
+      --gold-lt: #e8c96a;
+      --white:   #f5f3ef;
+      --grey:    #1a1a1a;
+      --mid:     #2a2a2a;
+      --text:    #b0a898;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor.big { width: 40px; height: 40px; transform: translate(-14px, -14px); }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.1em; color: var(--white); }
+    .logo span { color: var(--gold); }
+    nav a { color: var(--text); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover { color: var(--gold); }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+      padding: 8rem 2rem 4rem;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(201,168,76,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -5%; top: 30%;
+      width: 110%; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, transparent 100%);
+      opacity: 0.15;
+      transform: rotate(-8deg);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 860px; }
+    .hero-tag {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.4rem 1rem; margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      line-height: 0.92; letter-spacing: 0.02em;
+      opacity: 0; animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.3rem); color: var(--text);
+      margin-top: 1.8rem; max-width: 560px; margin-left: auto; margin-right: auto;
+      line-height: 1.7; opacity: 0; animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+    .hero-price-block { margin-top: 3rem; opacity: 0; animation: fadeUp 0.9s ease 0.8s forwards; }
+    .price-main { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 8vw, 5.5rem); color: var(--gold); line-height: 1; }
+    .price-period { font-size: 0.85rem; color: var(--text); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    .cta-btn {
+      display: inline-block; margin-top: 2.5rem;
+      padding: 1.1rem 3.5rem;
+      background: var(--gold); color: var(--black);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      border: none; cursor: none; position: relative; overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: left 0.45s ease;
+    }
+    .cta-btn:hover::before { left: 100%; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.3); }
+    .cta-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .section { padding: 7rem 4rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1; margin-bottom: 3.5rem; }
+
+    .includes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5px; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.1); }
+    .include-item { background: var(--grey); padding: 2.2rem 2rem; position: relative; transition: background 0.25s; }
+    .include-item:hover { background: var(--mid); }
+    .include-item::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--gold); transition: height 0.3s ease; }
+    .include-item:hover::before { height: 100%; }
+    .include-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+    .include-item h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .include-item p { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+
+    .how-section { padding: 7rem 4rem; background: var(--grey); }
+    .how-inner { max-width: 1100px; margin: 0 auto; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; counter-reset: steps; margin-top: 3.5rem; }
+    .step { counter-increment: steps; position: relative; }
+    .step::before { content: counter(steps, decimal-leading-zero); font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: rgba(201,168,76,0.08); line-height: 1; display: block; margin-bottom: 0.5rem; }
+    .step h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white); margin-bottom: 0.6rem; }
+    .step p { font-size: 0.85rem; color: var(--text); line-height: 1.7; }
+
+    .reviews-section { padding: 7rem 4rem; max-width: 1100px; margin: 0 auto; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5px; background: rgba(201,168,76,0.06); margin-top: 3.5rem; }
+    .review { background: var(--grey); padding: 2rem; }
+    .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .review blockquote { font-size: 0.95rem; line-height: 1.7; color: var(--white); font-style: italic; margin-bottom: 1.2rem; }
+    .review cite { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-style: normal; }
+
+    .faq-section { padding: 7rem 4rem; background: var(--grey); }
+    .faq-inner { max-width: 760px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(201,168,76,0.1); padding: 1.5rem 0; }
+    .faq-q { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 600; letter-spacing: 0.05em; cursor: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .faq-q span { color: var(--gold); font-size: 1.2rem; transition: transform 0.25s; }
+    .faq-a { font-size: 0.9rem; color: var(--text); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s; }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 1rem; }
+    .faq-item.open .faq-q span { transform: rotate(45deg); }
+
+    .cta-section { padding: 8rem 4rem; text-align: center; position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(201,168,76,0.1) 0%, transparent 70%); }
+    .cta-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; position: relative; }
+    .cta-section h2 em { color: var(--gold); font-style: normal; }
+    .cta-section p { color: var(--text); margin-top: 1.5rem; font-size: 1rem; position: relative; }
+
+    footer { border-top: 1px solid rgba(201,168,76,0.1); padding: 2.5rem 4rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-size: 0.75rem; color: var(--text); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a { font-size: 0.75rem; color: var(--text); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; place-items: center; backdrop-filter: blur(4px); }
+    .modal-overlay.active { display: grid; }
+    .modal { background: var(--grey); border: 1px solid rgba(201,168,76,0.2); padding: 3rem; max-width: 480px; width: 90%; text-align: center; position: relative; }
+    .modal h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .modal p { color: var(--text); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
+    .modal-close { position: absolute; top: 1rem; right: 1.2rem; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: none; transition: color 0.2s; }
+    .modal-close:hover { color: var(--gold); }
+    .modal-price { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--gold); margin-bottom: 1.5rem; }
+    .modal-price small { font-size: 1rem; color: var(--text); display: block; margin-top: -0.5rem; font-family: 'Barlow', sans-serif; letter-spacing: 0.1em; }
+
+    .loading-spinner { display: none; width: 22px; height: 22px; border: 2px solid rgba(10,10,10,0.3); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto; }
+    .cta-btn.loading .btn-text { display: none; }
+    .cta-btn.loading .loading-spinner { display: block; }
+
+    #error-msg { display: none; color: #ff6b6b; font-size: 0.8rem; margin-top: 1rem; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .section, .reviews-section, .cta-section { padding: 5rem 1.5rem; }
+      .how-section, .faq-section { padding: 5rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+      body { cursor: auto; }
+      .cursor { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cursor" id="cursor"></div>
+
+  <nav>
+    <div class="logo">Dave<span>Pro</span> Club</div>
+    <a href="#suscribirse">Suscribirse</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-tag">✦ Detailing profesional · San Javier, Murcia</div>
+      <h1>Tu coche.<br><em>Siempre</em><br>impecable.</h1>
+      <p class="hero-sub">Suscríbete una vez. Olvídate del resto.<br>Lavado completo detail + mantenimiento mensual en tu puerta.</p>
+      <div class="hero-price-block">
+        <div class="price-main">69€</div>
+        <div class="price-period">al mes · sin permanencia · cancela cuando quieras</div>
+        <br>
+        <button class="cta-btn" onclick="openModal()">
+          <span class="btn-text">Empezar mi suscripción →</span>
+          <div class="loading-spinner"></div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">✦ El plan</div>
+    <h2 class="section-title">Todo lo que incluye<br>tu suscripción</h2>
+    <div class="includes-grid">
+      <div class="include-item"><div class="include-icon">🚿</div><h3>Lavado exterior completo</h3><p>Prelavado, espuma activa, lavado a mano y aclarado. Sin marcas, sin remolinos.</p></div>
+      <div class="include-item"><div class="include-icon">🪣</div><h3>Interior detail</h3><p>Aspirado completo, limpieza de salpicadero, plásticos, cristales interiores y umbrales.</p></div>
+      <div class="include-item"><div class="include-icon">🔵</div><h3>Llantas y neumáticos</h3><p>Limpieza en profundidad de llantas con productos profesionales. Neumáticos hidratados.</p></div>
+      <div class="include-item"><div class="include-icon">✨</div><h3>Acabado protector</h3><p>Aplicación de detailer de mantenimiento para efecto hidrofóbico entre cada servicio.</p></div>
+      <div class="include-item"><div class="include-icon">📍</div><h3>A domicilio</h3><p>Vamos donde tú estés: casa, trabajo, urbanización. Sin que muevas el coche.</p></div>
+      <div class="include-item"><div class="include-icon">📅</div><h3>Cita prioritaria</h3><p>Los suscriptores tienen preferencia en agenda. Reservas en menos de 24h.</p></div>
+    </div>
+  </section>
+
+  <div class="how-section">
+    <div class="how-inner">
+      <div class="section-label">✦ El proceso</div>
+      <h2 class="section-title">Así de fácil</h2>
+      <div class="steps">
+        <div class="step"><h3>Te suscribes online</h3><p>Pago seguro con tarjeta. Se renueva automáticamente cada mes. Cancela cuando quieras desde el portal.</p></div>
+        <div class="step"><h3>Reservas tu cita</h3><p>Por WhatsApp o Instagram. Te confirmamos fecha y hora en menos de 24h. Sin complicaciones.</p></div>
+        <div class="step"><h3>Llegamos a tu puerta</h3><p>Tú no mueves el coche. Nosotros vamos equipados con todo lo necesario.</p></div>
+        <div class="step"><h3>Lo disfrutas</h3><p>Coche entregado impecable, con foto del resultado. El mes siguiente, repetimos.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="reviews-section">
+    <div class="section-label">✦ Clientes</div>
+    <h2 class="section-title">Lo que dicen<br>los que ya confían</h2>
+    <div class="reviews-grid">
+      <div class="review"><div class="stars">★★★★★</div><blockquote>"Lo dejó como recién salido del concesionario. No voy a ir a ningún otro sitio."</blockquote><cite>— Carlos M., suscriptor desde enero</cite></div>
+      <div class="review"><div class="stars">★★★★★</div><blockquote>"Me sorprendió el nivel de detalle. El interior de mi SUV nunca había estado tan limpio."</blockquote><cite>— Laura G., San Javier</cite></div>
+      <div class="review"><div class="stars">★★★★★</div><blockquote>"Cómodo, puntual y el resultado es brutal. La suscripción sale más que rentable."</blockquote><cite>— Alejandro R., Los Alcázares</cite></div>
+    </div>
+  </section>
+
+  <div class="faq-section">
+    <div class="faq-inner">
+      <div class="section-label">✦ Preguntas frecuentes</div>
+      <h2 class="section-title" style="margin-bottom: 2.5rem;">Todo claro</h2>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cuándo se cobra la suscripción? <span>+</span></div><div class="faq-a">El primer cobro es al suscribirte. A partir de ahí, se renueva automáticamente el mismo día cada mes. Sin sorpresas.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span>+</span></div><div class="faq-a">Sí, sin permanencia ni penalización. Cancelas desde el portal de cliente que te llega por email, o nos dices por WhatsApp y listo.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿En qué zonas operáis? <span>+</span></div><div class="faq-a">San Javier, Los Alcázares, Santiago de la Ribera, Los Urrutias, La Manga y alrededores. ¿Tienes duda sobre tu zona? Escríbenos.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Hace falta que esté yo presente? <span>+</span></div><div class="faq-a">No necesariamente. Si puedes dejarnos el coche accesible, no hace falta que estés en casa. Coordinamos contigo.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo añadir extras como cerámica o corrección de pintura? <span>+</span></div><div class="faq-a">Claro. Los suscriptores tienen precio especial en todos los servicios adicionales del taller: ceramización, corrección de pintura, tratamiento de tapicería y más.</div></div>
+    </div>
+  </div>
+
+  <section class="cta-section" id="suscribirse">
+    <h2>Empieza hoy.<br><em>Sin excusas.</em></h2>
+    <p>69€/mes · Cancela cuando quieras · A domicilio en tu zona</p>
+    <br><br>
+    <button class="cta-btn" onclick="openModal()">
+      <span class="btn-text">Quiero mi suscripción →</span>
+      <div class="loading-spinner"></div>
+    </button>
+  </section>
+
+  <footer>
+    <p>© 2025 Dave Pro Detailing · San Javier, Murcia · <a href="tel:+34686369451" style="color:var(--gold);text-decoration:none;">686 369 451</a></p>
+    <div class="footer-links">
+      <a href="https://instagram.com/dave_pro_detailing" target="_blank">Instagram</a>
+      <a href="https://wa.me/34686369451" target="_blank">WhatsApp</a>
+      <a href="mailto:davekleaner@gmail.com">Email</a>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3>Dave Pro Club</h3>
+      <p>Detailing completo cada mes.<br>En tu puerta. Sin complicaciones.</p>
+      <div class="modal-price">€69<small>/ mes · sin permanencia</small></div>
+      <button class="cta-btn" id="checkoutBtn" onclick="redirectToCheckout()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:0.5rem;">
+        <span class="btn-text">Pagar con tarjeta →</span>
+        <div class="loading-spinner"></div>
+      </button>
+      <div id="error-msg">Hubo un problema. Inténtalo de nuevo o escríbenos por WhatsApp.</div>
+      <p style="margin-top:1.2rem;font-size:0.72rem;color:var(--text);">🔒 Pago seguro con Stripe · Se renueva mensualmente</p>
+    </div>
+  </div>
+
+  <script>
+    const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Sz0RV2YzYYjJhOsIW1Dzb5PqdukVKNnLqXHAM5chhvkMgd9whH0P1IowVsGNZVhfDv5tRRUDWsvi92emZAH52YR00XIkWc7Jq';
+    const STRIPE_PRICE_ID        = 'price_1TVdgY2YzYYjJhOsDtsxA94w';
+
+    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+    /* Cursor */
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX - 6 + 'px';
+      cursor.style.top  = e.clientY - 6 + 'px';
+    });
+    document.querySelectorAll('button, a, .faq-q, .include-item').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    /* FAQ */
+    function toggleFaq(el) {
+      const item = el.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    /* Modal */
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('active');
+      document.getElementById('error-msg').style.display = 'none';
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    /* Stripe Checkout */
+    async function redirectToCheckout() {
+      const btn = document.getElementById('checkoutBtn');
+      const err = document.getElementById('error-msg');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      err.style.display = 'none';
+
+      try {
+        const { error } = await stripe.redirectToCheckout({
+          lineItems: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+          mode: 'subscription',
+          successUrl: window.location.origin + '/success.html',
+          cancelUrl: window.location.href,
+          locale: 'es',
+        });
+        if (error) throw error;
+      } catch (e) {
+        console.error(e);
+        err.style.display = 'block';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
