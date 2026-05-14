@@ -9,8 +9,8 @@
 
   <style>
     :root {
-      --black:#0a0a0a; --gold:#C9A84C; --gold-lt:#e8c96a;
-      --white:#f5f3ef; --grey:#1a1a1a; --mid:#2a2a2a; --text:#b0a898;
+      --black:#0a0a0a; --gold:#C9A84C; --white:#f5f3ef;
+      --grey:#1a1a1a; --mid:#2a2a2a; --text:#b0a898;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { scroll-behavior:smooth; }
@@ -27,6 +27,7 @@
     nav a { color:var(--text); text-decoration:none; font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; transition:color .2s; }
     nav a:hover { color:var(--gold); }
 
+    /* HERO */
     .hero { min-height:100vh; display:grid; place-items:center; text-align:center; position:relative; padding:8rem 2rem 4rem; overflow:hidden; }
     .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 50% 110%,rgba(201,168,76,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 20% 20%,rgba(201,168,76,.04) 0%,transparent 60%); }
     .hero::after { content:''; position:absolute; left:-5%; top:30%; width:110%; height:1px; background:linear-gradient(90deg,transparent 0%,var(--gold) 30%,transparent 100%); opacity:.15; transform:rotate(-8deg); }
@@ -35,22 +36,41 @@
     .hero h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,12vw,9rem); line-height:.92; letter-spacing:.02em; opacity:0; animation:fadeUp .9s ease .4s forwards; }
     .hero h1 em { color:var(--gold); font-style:normal; }
     .hero-sub { font-size:clamp(1rem,2.5vw,1.3rem); color:var(--text); margin-top:1.8rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7; opacity:0; animation:fadeUp .9s ease .6s forwards; }
-    .hero-price-block { margin-top:3rem; opacity:0; animation:fadeUp .9s ease .8s forwards; }
-    .price-main { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.5rem,8vw,5.5rem); color:var(--gold); line-height:1; }
-    .price-period { font-size:.85rem; color:var(--text); letter-spacing:.15em; text-transform:uppercase; }
+    .hero-cta { margin-top:2.5rem; opacity:0; animation:fadeUp .9s ease .8s forwards; }
 
-    .cta-btn { display:inline-block; margin-top:2.5rem; padding:1.1rem 3.5rem; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; border:none; cursor:none; position:relative; overflow:hidden; transition:transform .2s ease,box-shadow .2s ease; }
+    /* BOTÓN */
+    .cta-btn { display:inline-block; padding:1.1rem 3.5rem; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; border:none; cursor:none; position:relative; overflow:hidden; transition:transform .2s ease,box-shadow .2s ease; text-decoration:none; }
     .cta-btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent); transition:left .45s ease; }
     .cta-btn:hover::before { left:100%; }
     .cta-btn:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(201,168,76,.3); }
-    .cta-btn:disabled { opacity:.6; cursor:not-allowed; }
+    .cta-btn.outline { background:transparent; color:var(--gold); border:1px solid var(--gold); }
+    .cta-btn.outline:hover { background:rgba(201,168,76,.08); }
 
-    .section { padding:7rem 4rem; max-width:1100px; margin:0 auto; }
+    /* PLANES */
+    .planes-section { padding:7rem 4rem; max-width:1100px; margin:0 auto; }
     .section-label { font-family:'Barlow Condensed',sans-serif; font-size:.7rem; letter-spacing:.35em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
     .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,6vw,4.5rem); line-height:1; margin-bottom:3.5rem; }
 
-    .includes-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5px; background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.1); }
-    .include-item { background:var(--grey); padding:2.2rem 2rem; position:relative; transition:background .25s; }
+    .planes-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5px; background:rgba(201,168,76,.1); border:1px solid rgba(201,168,76,.1); }
+    .plan { background:var(--grey); padding:3rem 2.5rem; position:relative; transition:background .25s; }
+    .plan:hover { background:var(--mid); }
+    .plan.featured { background:var(--mid); }
+    .plan-badge { display:inline-block; font-family:'Barlow Condensed',sans-serif; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; background:var(--gold); color:var(--black); padding:.3rem .8rem; margin-bottom:1.5rem; font-weight:700; }
+    .plan-name { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; letter-spacing:.05em; margin-bottom:.3rem; }
+    .plan-desc { font-size:.85rem; color:var(--text); margin-bottom:2rem; line-height:1.6; }
+    .plan-price { font-family:'Bebas Neue',sans-serif; font-size:4.5rem; color:var(--gold); line-height:1; margin-bottom:.3rem; }
+    .plan-price span { font-size:1.2rem; vertical-align:top; margin-top:.8rem; display:inline-block; }
+    .plan-period { font-size:.75rem; color:var(--text); letter-spacing:.15em; text-transform:uppercase; margin-bottom:2.5rem; }
+    .plan-features { list-style:none; margin-bottom:2.5rem; display:grid; gap:.8rem; }
+    .plan-features li { font-size:.88rem; color:var(--text); display:flex; align-items:flex-start; gap:.7rem; line-height:1.5; }
+    .plan-features li::before { content:'✓'; color:var(--gold); font-weight:700; flex-shrink:0; margin-top:.05rem; }
+    .plan-features li.extra { color:var(--white); }
+
+    /* INCLUDES */
+    .includes-section { padding:7rem 4rem; background:var(--grey); }
+    .includes-inner { max-width:1100px; margin:0 auto; }
+    .includes-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5px; background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.1); margin-top:3.5rem; }
+    .include-item { background:var(--black); padding:2.2rem 2rem; position:relative; transition:background .25s; }
     .include-item:hover { background:var(--mid); }
     .include-item::before { content:''; position:absolute; top:0; left:0; width:3px; height:0; background:var(--gold); transition:height .3s ease; }
     .include-item:hover::before { height:100%; }
@@ -58,23 +78,25 @@
     .include-item h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; margin-bottom:.5rem; }
     .include-item p { font-size:.85rem; color:var(--text); line-height:1.6; }
 
-    .how-section { padding:7rem 4rem; background:var(--grey); }
-    .how-inner { max-width:1100px; margin:0 auto; }
+    /* HOW */
+    .how-section { padding:7rem 4rem; max-width:1100px; margin:0 auto; }
     .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:3rem; counter-reset:steps; margin-top:3.5rem; }
     .step { counter-increment:steps; }
     .step::before { content:counter(steps,decimal-leading-zero); font-family:'Bebas Neue',sans-serif; font-size:5rem; color:rgba(201,168,76,.08); line-height:1; display:block; margin-bottom:.5rem; }
     .step h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.15rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--white); margin-bottom:.6rem; }
     .step p { font-size:.85rem; color:var(--text); line-height:1.7; }
 
-    .reviews-section { padding:7rem 4rem; max-width:1100px; margin:0 auto; }
+    /* REVIEWS */
+    .reviews-section { padding:7rem 4rem; background:var(--grey); }
+    .reviews-inner { max-width:1100px; margin:0 auto; }
     .reviews-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5px; background:rgba(201,168,76,.06); margin-top:3.5rem; }
-    .review { background:var(--grey); padding:2rem; }
+    .review { background:var(--black); padding:2rem; }
     .stars { color:var(--gold); font-size:.85rem; letter-spacing:.1em; margin-bottom:1rem; }
     .review blockquote { font-size:.95rem; line-height:1.7; color:var(--white); font-style:italic; margin-bottom:1.2rem; }
     .review cite { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); font-style:normal; }
 
-    .faq-section { padding:7rem 4rem; background:var(--grey); }
-    .faq-inner { max-width:760px; margin:0 auto; }
+    /* FAQ */
+    .faq-section { padding:7rem 4rem; max-width:760px; margin:0 auto; }
     .faq-item { border-bottom:1px solid rgba(201,168,76,.1); padding:1.5rem 0; }
     .faq-q { font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:600; letter-spacing:.05em; cursor:none; display:flex; justify-content:space-between; align-items:center; user-select:none; }
     .faq-q span { color:var(--gold); font-size:1.2rem; transition:transform .25s; }
@@ -82,42 +104,28 @@
     .faq-item.open .faq-a { max-height:200px; padding-top:1rem; }
     .faq-item.open .faq-q span { transform:rotate(45deg); }
 
+    /* CTA FINAL */
     .cta-section { padding:8rem 4rem; text-align:center; position:relative; overflow:hidden; }
     .cta-section::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 70% 60% at 50% 100%,rgba(201,168,76,.1) 0%,transparent 70%); }
     .cta-section h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,8vw,6rem); line-height:.95; position:relative; }
     .cta-section h2 em { color:var(--gold); font-style:normal; }
     .cta-section p { color:var(--text); margin-top:1.5rem; font-size:1rem; position:relative; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2.5rem; position:relative; }
 
+    /* FOOTER */
     footer { border-top:1px solid rgba(201,168,76,.1); padding:2.5rem 4rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
     footer p { font-size:.75rem; color:var(--text); }
     .footer-links { display:flex; gap:2rem; }
     .footer-links a { font-size:.75rem; color:var(--text); text-decoration:none; letter-spacing:.1em; text-transform:uppercase; transition:color .2s; }
     .footer-links a:hover { color:var(--gold); }
 
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:500; place-items:center; backdrop-filter:blur(4px); }
-    .modal-overlay.active { display:grid; }
-    .modal { background:var(--grey); border:1px solid rgba(201,168,76,.2); padding:3rem; max-width:480px; width:90%; text-align:center; position:relative; }
-    .modal h3 { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; margin-bottom:.5rem; }
-    .modal > p { color:var(--text); font-size:.9rem; margin-bottom:2rem; line-height:1.6; }
-    .modal-close { position:absolute; top:1rem; right:1.2rem; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:none; transition:color .2s; }
-    .modal-close:hover { color:var(--gold); }
-    .modal-price { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; color:var(--gold); margin-bottom:1.5rem; }
-    .modal-price small { font-size:1rem; color:var(--text); display:block; margin-top:-.5rem; font-family:'Barlow',sans-serif; letter-spacing:.1em; }
-
-    .btn-wrap { display:flex; justify-content:center; align-items:center; gap:.5rem; width:100%; }
-    .loading-spinner { display:none; width:22px; height:22px; border:2px solid rgba(10,10,10,.3); border-top-color:var(--black); border-radius:50%; animation:spin .7s linear infinite; }
-    .cta-btn.loading .btn-text { display:none; }
-    .cta-btn.loading .loading-spinner { display:block; }
-
-    #error-msg { display:none; color:#ff6b6b; font-size:.8rem; margin-top:1rem; }
-
     @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spin { to{transform:rotate(360deg)} }
 
     @media(max-width:768px) {
       nav { padding:1rem 1.5rem; }
-      .section,.reviews-section,.cta-section { padding:5rem 1.5rem; }
-      .how-section,.faq-section { padding:5rem 1.5rem; }
+      .planes-section,.how-section,.faq-section,.cta-section { padding:5rem 1.5rem; }
+      .includes-section,.reviews-section { padding:5rem 1.5rem; }
+      .planes-grid { grid-template-columns:1fr; }
       footer { padding:2rem 1.5rem; flex-direction:column; text-align:center; }
       body { cursor:auto; }
       .cursor { display:none; }
@@ -130,85 +138,138 @@
 
   <nav>
     <div class="logo">Dave<span>Pro</span> Club</div>
-    <a href="#suscribirse">Suscribirse</a>
+    <a href="#planes">Ver planes</a>
   </nav>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
       <div class="hero-tag">✦ Detailing profesional · San Javier, Murcia</div>
       <h1>Tu coche.<br><em>Siempre</em><br>impecable.</h1>
-      <p class="hero-sub">Suscríbete una vez. Olvídate del resto.<br>Lavado completo detail + mantenimiento mensual en tu puerta.</p>
-      <div class="hero-price-block">
-        <div class="price-main">69€</div>
-        <div class="price-period">al mes · sin permanencia · cancela cuando quieras</div>
-        <br>
-        <button class="cta-btn" onclick="openModal()">
-          <span class="btn-text">Empezar mi suscripción →</span>
+      <p class="hero-sub">Suscríbete una vez. Olvídate del resto.<br>Detailing completo cada mes — en el taller o en tu puerta.</p>
+      <div class="hero-cta">
+        <a href="#planes" class="cta-btn">Ver los planes →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANES -->
+  <section class="planes-section" id="planes">
+    <div class="section-label">✦ Elige tu plan</div>
+    <h2 class="section-title">Dos formas de<br>tener el coche perfecto</h2>
+
+    <div class="planes-grid">
+
+      <!-- PLAN LOCAL -->
+      <div class="plan">
+        <div class="plan-name">Club Local</div>
+        <div class="plan-desc">Traes el coche al taller. Nosotros hacemos el resto.</div>
+        <div class="plan-price"><span>€</span>69</div>
+        <div class="plan-period">al mes · sin permanencia</div>
+        <ul class="plan-features">
+          <li>Lavado exterior completo a mano</li>
+          <li>Interior detail completo</li>
+          <li>Llantas y neumáticos</li>
+          <li>Acabado hidrofóbico de mantenimiento</li>
+          <li>Cita prioritaria en menos de 24h</li>
+          <li>Descuento en servicios adicionales</li>
+        </ul>
+        <button class="cta-btn outline" style="width:100%" onclick="window.location.href='https://buy.stripe.com/28EcMY9Of0xD4gR5Nq4wM07'">
+          Suscribirme al Club Local →
         </button>
       </div>
+
+      <!-- PLAN DOMICILIO -->
+      <div class="plan featured">
+        <div class="plan-badge">Más cómodo</div>
+        <div class="plan-name">Club Domicilio</div>
+        <div class="plan-desc">No mueves el coche. Vamos a donde estés tú.</div>
+        <div class="plan-price"><span>€</span>79</div>
+        <div class="plan-period">al mes · sin permanencia</div>
+        <ul class="plan-features">
+          <li>Lavado exterior completo a mano</li>
+          <li>Interior detail completo</li>
+          <li>Llantas y neumáticos</li>
+          <li>Acabado hidrofóbico de mantenimiento</li>
+          <li>Cita prioritaria en menos de 24h</li>
+          <li>Descuento en servicios adicionales</li>
+          <li class="extra">✦ Servicio a domicilio incluido</li>
+          <li class="extra">✦ Sin desplazarte ni un metro</li>
+        </ul>
+        <button class="cta-btn" style="width:100%" onclick="window.location.href='https://buy.stripe.com/aFa8wI9Of4NTbJjfo04wM09'">
+          Suscribirme al Club Domicilio →
+        </button>
+      </div>
+
     </div>
+    <p style="text-align:center;font-size:.78rem;color:var(--text);margin-top:1.5rem;">Cancela cuando quieras · Sin letra pequeña · Pago seguro con Stripe 🔒</p>
   </section>
 
-  <section class="section">
-    <div class="section-label">✦ El plan</div>
-    <h2 class="section-title">Todo lo que incluye<br>tu suscripción</h2>
-    <div class="includes-grid">
-      <div class="include-item"><div class="include-icon">🚿</div><h3>Lavado exterior completo</h3><p>Prelavado, espuma activa, lavado a mano y aclarado. Sin marcas, sin remolinos.</p></div>
-      <div class="include-item"><div class="include-icon">🪣</div><h3>Interior detail</h3><p>Aspirado completo, limpieza de salpicadero, plásticos, cristales interiores y umbrales.</p></div>
-      <div class="include-item"><div class="include-icon">🔵</div><h3>Llantas y neumáticos</h3><p>Limpieza en profundidad de llantas con productos profesionales. Neumáticos hidratados.</p></div>
-      <div class="include-item"><div class="include-icon">✨</div><h3>Acabado protector</h3><p>Aplicación de detailer de mantenimiento para efecto hidrofóbico entre cada servicio.</p></div>
-      <div class="include-item"><div class="include-icon">📍</div><h3>A domicilio</h3><p>Vamos donde tú estés: casa, trabajo, urbanización. Sin que muevas el coche.</p></div>
-      <div class="include-item"><div class="include-icon">📅</div><h3>Cita prioritaria</h3><p>Los suscriptores tienen preferencia en agenda. Reservas en menos de 24h.</p></div>
-    </div>
-  </section>
-
-  <div class="how-section">
-    <div class="how-inner">
-      <div class="section-label">✦ El proceso</div>
-      <h2 class="section-title">Así de fácil</h2>
-      <div class="steps">
-        <div class="step"><h3>Te suscribes online</h3><p>Pago seguro con tarjeta. Se renueva automáticamente cada mes. Cancela cuando quieras desde el portal.</p></div>
-        <div class="step"><h3>Reservas tu cita</h3><p>Por WhatsApp o Instagram. Te confirmamos fecha y hora en menos de 24h. Sin complicaciones.</p></div>
-        <div class="step"><h3>Llegamos a tu puerta</h3><p>Tú no mueves el coche. Nosotros vamos equipados con todo lo necesario.</p></div>
-        <div class="step"><h3>Lo disfrutas</h3><p>Coche entregado impecable, con foto del resultado. El mes siguiente, repetimos.</p></div>
+  <!-- QUÉ INCLUYE -->
+  <div class="includes-section">
+    <div class="includes-inner">
+      <div class="section-label">✦ El servicio</div>
+      <h2 class="section-title">Lo que hacemos<br>en cada visita</h2>
+      <div class="includes-grid">
+        <div class="include-item"><div class="include-icon">🚿</div><h3>Lavado exterior completo</h3><p>Prelavado, espuma activa, lavado a mano y aclarado. Sin marcas, sin remolinos.</p></div>
+        <div class="include-item"><div class="include-icon">🪣</div><h3>Interior detail</h3><p>Aspirado completo, salpicadero, plásticos, cristales interiores y umbrales.</p></div>
+        <div class="include-item"><div class="include-icon">🔵</div><h3>Llantas y neumáticos</h3><p>Limpieza en profundidad con productos profesionales. Neumáticos hidratados.</p></div>
+        <div class="include-item"><div class="include-icon">✨</div><h3>Acabado protector</h3><p>Detailer de mantenimiento para efecto hidrofóbico entre cada servicio.</p></div>
+        <div class="include-item"><div class="include-icon">📍</div><h3>Taller o domicilio</h3><p>Según tu plan: lo traes al taller en C/ San Luis 61 o vamos nosotros a tu puerta.</p></div>
+        <div class="include-item"><div class="include-icon">📅</div><h3>Cita prioritaria</h3><p>Los suscriptores tienen preferencia en agenda. Confirmamos en menos de 24h.</p></div>
       </div>
     </div>
   </div>
 
-  <section class="reviews-section">
-    <div class="section-label">✦ Clientes</div>
-    <h2 class="section-title">Lo que dicen<br>los que ya confían</h2>
-    <div class="reviews-grid">
-      <div class="review"><div class="stars">★★★★★</div><blockquote>"Lo dejó como recién salido del concesionario. No voy a ir a ningún otro sitio."</blockquote><cite>— Carlos M., suscriptor desde enero</cite></div>
-      <div class="review"><div class="stars">★★★★★</div><blockquote>"Me sorprendió el nivel de detalle. El interior de mi SUV nunca había estado tan limpio."</blockquote><cite>— Laura G., San Javier</cite></div>
-      <div class="review"><div class="stars">★★★★★</div><blockquote>"Cómodo, puntual y el resultado es brutal. La suscripción sale más que rentable."</blockquote><cite>— Alejandro R., Los Alcázares</cite></div>
+  <!-- CÓMO FUNCIONA -->
+  <section class="how-section">
+    <div class="section-label">✦ El proceso</div>
+    <h2 class="section-title">Así de fácil</h2>
+    <div class="steps">
+      <div class="step"><h3>Eliges tu plan</h3><p>Local o domicilio. Pago seguro con tarjeta. Se renueva automáticamente cada mes.</p></div>
+      <div class="step"><h3>Reservas tu cita</h3><p>Por WhatsApp o Instagram. Te confirmamos en menos de 24h. Sin complicaciones.</p></div>
+      <div class="step"><h3>El coche se transforma</h3><p>En el taller o en tu puerta — tú decides. Nosotros llevamos todo el equipo.</p></div>
+      <div class="step"><h3>Lo disfrutas</h3><p>Entregado impecable con foto del resultado. El mes siguiente, repetimos.</p></div>
     </div>
   </section>
 
-  <div class="faq-section">
-    <div class="faq-inner">
-      <div class="section-label">✦ Preguntas frecuentes</div>
-      <h2 class="section-title" style="margin-bottom:2.5rem">Todo claro</h2>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cuándo se cobra la suscripción? <span>+</span></div><div class="faq-a">El primer cobro es al suscribirte. A partir de ahí, se renueva automáticamente el mismo día cada mes. Sin sorpresas.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span>+</span></div><div class="faq-a">Sí, sin permanencia ni penalización. Cancelas desde el portal de cliente que te llega por email, o nos dices por WhatsApp y listo.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿En qué zonas operáis? <span>+</span></div><div class="faq-a">San Javier, Los Alcázares, Santiago de la Ribera, Los Urrutias, La Manga y alrededores. ¿Tienes duda sobre tu zona? Escríbenos.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Hace falta que esté yo presente? <span>+</span></div><div class="faq-a">No necesariamente. Si puedes dejarnos el coche accesible, no hace falta que estés en casa. Coordinamos contigo.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo añadir extras como cerámica o corrección de pintura? <span>+</span></div><div class="faq-a">Claro. Los suscriptores tienen precio especial en todos los servicios adicionales del taller: ceramización, corrección de pintura, tratamiento de tapicería y más.</div></div>
+  <!-- REVIEWS -->
+  <div class="reviews-section">
+    <div class="reviews-inner">
+      <div class="section-label">✦ Clientes</div>
+      <h2 class="section-title">Lo que dicen<br>los que ya confían</h2>
+      <div class="reviews-grid">
+        <div class="review"><div class="stars">★★★★★</div><blockquote>"Lo dejó como recién salido del concesionario. No voy a ir a ningún otro sitio."</blockquote><cite>— Carlos M., suscriptor Club Local</cite></div>
+        <div class="review"><div class="stars">★★★★★</div><blockquote>"Me sorprendió el nivel de detalle. El interior de mi SUV nunca había estado tan limpio."</blockquote><cite>— Laura G., San Javier</cite></div>
+        <div class="review"><div class="stars">★★★★★</div><blockquote>"Cómodo, puntual y el resultado es brutal. La suscripción domicilio sale más que rentable."</blockquote><cite>— Alejandro R., Los Alcázares</cite></div>
+      </div>
     </div>
   </div>
 
-  <section class="cta-section" id="suscribirse">
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-label">✦ Preguntas frecuentes</div>
+    <h2 class="section-title" style="margin-bottom:2.5rem">Todo claro</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cuándo se cobra la suscripción? <span>+</span></div><div class="faq-a">El primer cobro es al suscribirte. A partir de ahí, se renueva automáticamente el mismo día cada mes.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar de plan? <span>+</span></div><div class="faq-a">Sí. Cancelas el plan actual y te suscribes al otro. Nos lo dices por WhatsApp y lo gestionamos juntos.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span>+</span></div><div class="faq-a">Sí, sin permanencia ni penalización. Cancelas desde el portal de cliente que te llega por email o nos lo dices por WhatsApp.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿En qué zonas hacéis domicilio? <span>+</span></div><div class="faq-a">San Javier, Los Alcázares, Santiago de la Ribera, Los Urrutias, La Manga y alrededores. ¿Tienes duda sobre tu zona? Escríbenos.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo añadir extras como cerámica o corrección? <span>+</span></div><div class="faq-a">Claro. Los suscriptores tienen precio especial en todos los servicios del taller: ceramización, corrección de pintura, tapicería y más.</div></div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section">
     <h2>Empieza hoy.<br><em>Sin excusas.</em></h2>
-    <p>69€/mes · Cancela cuando quieras · A domicilio en tu zona</p>
-    <br><br>
-    <button class="cta-btn" onclick="openModal()">
-      <span class="btn-text">Quiero mi suscripción →</span>
-    </button>
+    <p>Elige tu plan · Cancela cuando quieras · Pago seguro</p>
+    <div class="cta-btns">
+      <button class="cta-btn outline" onclick="window.location.href='https://buy.stripe.com/28EcMY9Of0xD4gR5Nq4wM07'">Club Local — 69€/mes</button>
+      <button class="cta-btn" onclick="window.location.href='https://buy.stripe.com/aFa8wI9Of4NTbJjfo04wM09'">Club Domicilio — 79€/mes</button>
+    </div>
   </section>
 
   <footer>
-    <p>© 2025 Dave Pro Detailing · San Javier, Murcia · <a href="tel:+34686369451" style="color:var(--gold);text-decoration:none;">686 369 451</a></p>
+    <p>© 2025 Dave Pro Detailing · C/ San Luis 61, San Javier · <a href="tel:+34686369451" style="color:var(--gold);text-decoration:none;">686 369 451</a></p>
     <div class="footer-links">
       <a href="https://instagram.com/dave_pro_detailing" target="_blank">Instagram</a>
       <a href="https://wa.me/34686369451" target="_blank">WhatsApp</a>
@@ -216,34 +277,7 @@
     </div>
   </footer>
 
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <h3>Dave Pro Club</h3>
-      <p>Detailing completo cada mes.<br>En tu puerta. Sin complicaciones.</p>
-      <div class="modal-price">€69<small>/ mes · sin permanencia</small></div>
-      <button class="cta-btn btn-wrap" id="checkoutBtn" onclick="goToStripe()" style="width:100%">
-        <span class="btn-text">Pagar con tarjeta →</span>
-        <div class="loading-spinner"></div>
-      </button>
-      <div id="error-msg">Hubo un problema. <a href="https://wa.me/34686369451" style="color:#ff6b6b">Escríbenos por WhatsApp.</a></div>
-      <p style="margin-top:1.2rem;font-size:.72rem;color:var(--text)">🔒 Pago seguro con Stripe · Se renueva mensualmente</p>
-    </div>
-  </div>
-
   <script>
-    /* ── Stripe ── */
-    const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/28EcMY9Of0xD4gR5Nq4wM07';
-
-    function goToStripe() {
-      const btn = document.getElementById('checkoutBtn');
-      btn.classList.add('loading');
-      btn.disabled = true;
-      window.location.href = STRIPE_PAYMENT_LINK;
-    }
-
-    /* ── Cursor ── */
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', e => {
       cursor.style.left = e.clientX - 6 + 'px';
@@ -254,24 +288,12 @@
       el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
     });
 
-    /* ── FAQ ── */
     function toggleFaq(el) {
       const item = el.closest('.faq-item');
       const wasOpen = item.classList.contains('open');
       document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
       if (!wasOpen) item.classList.add('open');
     }
-
-    /* ── Modal ── */
-    function openModal() {
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
-    }
-    document.getElementById('modalOverlay').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
   </script>
 
 </body>
